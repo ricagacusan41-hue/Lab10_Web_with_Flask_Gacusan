@@ -1,24 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="auth-wrapper">
-    <h1 style="text-align: center; color: #C41E3A; font-size: 42px; margin-bottom: 32px; font-weight: 700;">Register</h1>
-    <div class="auth-panel">
-      <form method="POST" class="auth-form">
-        {{ form.hidden_tag() }}
-        <div class="form-field">
-          {{ form.full_name.label }}
-          {{ form.full_name(placeholder="Enter your name") }}
-        </div>
-        <div class="form-field">
-          {{ form.email.label }}
-          {{ form.email(placeholder="Enter your email") }}
-        </div>
-        <div class="form-field">
-          {{ form.password.label }}
-          {{ form.password(placeholder="Create a password") }}
-        </div>
-        {{ form.submit(class="primary-button") }}
-      </form>
-    </div>
+  <div class="auth-panel">
+    <h1 class="page-title">Register</h1>
+    <form method="POST" class="auth-form">
+      {{ form.hidden_tag() }}
+      <div class="form-field">
+        {{ form.full_name.label }}
+        {{ form.full_name(placeholder="Enter your name") }}
+      </div>
+      <div class="form-field">
+        {{ form.email.label }}
+        {{ form.email(placeholder="Enter your email") }}
+      </div>
+      <div class="form-field">
+        {{ form.password.label }}
+        {{ form.password(placeholder="Create a password") }}
+      </div>
+      {{ form.submit(class="primary-button") }}
+    </form>
   </div>
 {% endblock %}
