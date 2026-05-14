@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="auth-wrapper">
+    <h1 style="text-align: center; color: #C41E3A; font-size: 42px; margin-bottom: 32px; font-weight: 700;">Log In</h1>
+    <div class="auth-panel">
+      <form method="POST" class="auth-form">
+        {{ form.hidden_tag() }}
+        <div class="form-field">
+          {{ form.email.label }}
+          {{ form.email(placeholder="Enter your email") }}
+        </div>
+        <div class="form-field">
+          {{ form.password.label }}
+          {{ form.password(placeholder="Enter your password") }}
+        </div>
+        {{ form.submit(class="primary-button") }}
+        <a href="#" class="secondary-link">Forgot your password?</a>
+      </form>
+    </div>
+  </div>
+{% endblock %}

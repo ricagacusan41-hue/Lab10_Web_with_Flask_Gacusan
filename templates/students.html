@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block content %}
+  <style>
+    .students-container {
+      width: 100%;
+      max-width: 600px;
+    }
+    .students-header {
+      margin-bottom: 24px;
+    }
+    .students-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: black;
+      margin: 0 0 8px 0;
+    }
+    .students-count {
+      font-size: 14px;
+      color: grey;
+    }
+    .student-entry {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .student-entry:last-child {
+      border-bottom: none;
+    }
+    .student-photo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 16px;
+      background-color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #999;
+    }
+    .student-info {
+      flex: 1;
+    }
+    .student-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: black;
+      margin: 0;
+    }
+    .student-email {
+      font-size: 14px;
+      color: grey;
+      margin: 4px 0 0 0;
+    }
+    .admin-actions {
+      margin-left: 12px;
+    }
+    .admin-actions a {
+      color: #C41E3A;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .add-student-form {
+      background-color: #f9f9f9;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+    .add-student-form input {
+      width: 100%;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .add-student-form button {
+      width: 100%;
+      height: 52px;
+      padding: 0 18px;
+      background-color: #C41E3A;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+
+  <div class="students-container">
+    {% if current_user.role == 'admin' %}
+    <div class="add-student-form">
+      <form method="POST" action="{{ url_for('add_student') }}">
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <button type="submit">Add Student</button>
+      </form>
+    </div>
+    {% endif %}
+
+    <div class="students-header">
+      <h2>Students</h2>
+      <p class="students-count">Total: {{ students|length }}</p>
+    </div>
+
+    <div class="student-list">
+      {% for student in students %}
+      <div class="student-entry">
+        <div class="student-photo">
+          {% if student.user_image %}
+            <img src="{{ url_for('static', filename='uploads/' + student.user_image) }}" alt="{{ student.full_name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          {% else %}
+            👤
+          {% endif %}
+        </div>
+        <div class="student-info">
+          <p class="student-name">{{ student.full_name }} <span style="font-weight: normal; color: grey;">({{ student.email }})</span></p>
+          {% if student.user_section or student.user_sex %}
+            <p style="color: grey; font-size: 13px; margin: 4px 0 0 0;\">
+              {% if student.user_section %}{{ student.user_section }}{% endif %}
+              {% if student.user_section and student.user_sex %} • {% endif %}
+              {% if student.user_sex %}{{ student.user_sex }}{% endif %}
+            </p>
+          {% endif %}
+        </div>
+        {% if current_user.role == 'admin' %}
+        <div class="admin-actions">
+          <a href="{{ url_for('delete_student', id=student.id) }}">Delete</a>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
