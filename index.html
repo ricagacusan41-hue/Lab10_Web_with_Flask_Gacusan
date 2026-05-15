@@ -1,32 +1,40 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flask App Demo</title>
+  <title>Flask Activity</title>
   <link rel="stylesheet" href="static/css/style.css">
   <style>
     .page { display: none; }
     .page.active { display: block; }
-    .content-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
-    .content-header h2 { margin: 0; }
-    .app-links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-    .demo-button { background: var(--brand-red); color: #fff; border: none; padding: 12px 18px; border-radius: 14px; cursor: pointer; font-weight: 700; }
-    .secondary-button { background: none; border: 1px solid #d5d5d5; color: var(--text); padding: 12px 18px; border-radius: 14px; cursor: pointer; }
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 16px; }
-    .table { width: 100%; border-collapse: collapse; }
-    .table th, .table td { padding: 12px 10px; border-bottom: 1px solid #e6e6e6; text-align: left; }
-    .table th { color: #555; font-weight: 700; }
-    .student-actions button { margin-left: 8px; }
     .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 20px; min-width: 280px; max-width: 90%; padding: 14px 18px; color: white; border-radius: 14px; opacity: 0.98; z-index: 999; display: none; }
     .toast.show { display: block; }
     .toast.success { background: #2d8e5f; }
     .toast.error { background: #c41e3a; }
     .hidden { display: none !important; }
-    .link-button { border: none; background: transparent; color: #1565c0; cursor: pointer; padding: 0; font: inherit; }
-    .form-row { display: grid; gap: 16px; }
-    .student-row td:first-child { width: 55%; }
-    .student-row td:last-child { width: 45%; }
+    .app-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .student-actions button { margin-left: 8px; }
+    .profile-avatar { width: 140px; height: 140px; margin: 0 auto 22px; border-radius: 50%; background: #f2f2f2; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .avatar-img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-placeholder { font-size: 64px; }
+    .students-container { width: 100%; max-width: 600px; margin: 0 auto; }
+    .students-header { margin-bottom: 24px; }
+    .students-header h2 { font-size: 32px; font-weight: 700; color: black; margin: 0 0 8px 0; }
+    .students-count { font-size: 14px; color: grey; }
+    .student-entry { display: flex; align-items: center; padding: 16px 0; border-bottom: 1px solid #eee; }
+    .student-entry:last-child { border-bottom: none; }
+    .student-photo { width: 50px; height: 50px; border-radius: 50%; margin-right: 16px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #999; overflow: hidden; }
+    .student-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .student-info { flex: 1; }
+    .student-name { font-size: 16px; font-weight: 600; color: black; margin: 0; }
+    .student-email { font-size: 14px; color: grey; margin: 4px 0 0 0; }
+    .student-meta { color: grey; font-size: 13px; margin: 4px 0 0 0; }
+    .admin-actions { margin-left: 12px; }
+    .admin-actions a { color: #C41E3A; text-decoration: none; font-size: 14px; cursor: pointer; }
+    .add-student-form { background-color: #f9f9f9; padding: 16px; border-radius: 8px; margin-bottom: 24px; }
+    .add-student-form input { width: 100%; padding: 14px 16px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 12px; font-size: 16px; box-sizing: border-box; }
+    .add-student-form button { width: 100%; height: 48px; background-color: #C41E3A; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -43,9 +51,9 @@
       <div id="homePage" class="page active">
         <div class="auth-panel welcome-panel" id="homeLoggedOut">
           <h1 class="page-title">Welcome to Activity 10 Flask Web App</h1>
-          <p class="welcome-text">This static demo recreates the Flask interface and behavior purely in the browser.</p>
+          <p class="welcome-text">This app was built using Flask and Jinja2 templates.</p>
           <div class="app-links">
-            <button class="demo-button" data-route="login">Log In</button>
+            <button class="primary-button" data-route="login">Log In</button>
             <button class="secondary-button" data-route="register">Register</button>
           </div>
         </div>
@@ -60,29 +68,20 @@
       <div id="aboutPage" class="page">
         <div class="auth-panel">
           <h1 class="page-title">About</h1>
-          <p>This demo page is a static recreation of your Flask app for GitHub Pages. It shows the same navigation, login flow, profile editing, and student management experience, but it runs completely in the browser with localStorage.</p>
+          <p class="welcome-text">This app is a Flask web application built with Jinja2 templates. It includes user registration, login, profile management, and admin student controls.</p>
         </div>
       </div>
 
       <div id="contactPage" class="page">
         <div class="auth-panel">
-          <h1 class="page-title">Contact</h1>
-          <p class="welcome-text">Send a message to the demo team. The form is simulated in the browser.</p>
-          <form id="contactForm" class="auth-form">
-            <div class="form-field">
-              <label for="contactName">Name</label>
-              <input id="contactName" type="text" placeholder="Your name" required>
-            </div>
-            <div class="form-field">
-              <label for="contactEmail">Email</label>
-              <input id="contactEmail" type="email" placeholder="Your email" required>
-            </div>
-            <div class="form-field">
-              <label for="contactMessage">Message</label>
-              <textarea id="contactMessage" rows="5" placeholder="Write a message" required style="width:100%; padding:14px 16px; border-radius:16px; border:1px solid #d5d5d5; resize:vertical;"></textarea>
-            </div>
-            <button type="submit" class="primary-button">Send Message</button>
-          </form>
+          <h1 class="page-title">Contact Us</h1>
+          <p class="welcome-text">We’d love to hear from you! Whether you have questions, feedback, or need support, our team is here to help.</p>
+          <div class="contact-details">
+            <p class="welcome-text"><strong>📍 Address</strong><br>San Marcelino St, Ayala Blvd, Ermita, Manila, 1000</p>
+            <p class="welcome-text"><strong>📧 Email</strong><br>rica.gacusan@tup.edu.ph</p>
+            <p class="welcome-text"><strong>☎️ Phone</strong><br>+63 912 345 6789</p>
+            <p class="welcome-text"><strong>🕒 Hours</strong><br>Monday – Friday: 8:00 AM – 5:00 PM</p>
+          </div>
         </div>
       </div>
 
@@ -148,14 +147,14 @@
               </select>
             </div>
             <div class="form-field">
-              <label for="profilePhoto">Profile Photo</label>
+              <label for="profilePhoto">Profile Picture</label>
               <input id="profilePhoto" type="file" accept="image/*">
             </div>
             <div class="preview-section hidden" id="photoPreviewSection">
-              <h3>Photo preview</h3>
+              <h3>Preview</h3>
               <img id="photoPreview" src="" alt="Preview">
             </div>
-            <button type="submit" class="primary-button">Save Profile</button>
+            <button type="submit" class="primary-button">Save Changes</button>
             <button type="button" class="secondary-button" id="removePhotoButton">Remove Photo</button>
           </form>
         </div>
@@ -163,32 +162,27 @@
 
       <div id="studentsPage" class="page">
         <div class="auth-panel">
-          <div class="content-header">
-            <h1 class="page-title">Students</h1>
-            <button type="button" class="secondary-button hidden" id="showAddStudentButton">Add Student</button>
+          <div class="students-container">
+            <div id="adminStudentForm" class="add-student-form hidden">
+              <form id="addStudentForm" class="auth-form">
+                <input id="studentName" type="text" placeholder="Full Name" required>
+                <input id="studentEmail" type="email" placeholder="Email" required>
+                <button type="submit">Add Student</button>
+              </form>
+            </div>
+            <div class="students-header">
+              <h2>Students</h2>
+              <p class="students-count">Total: <span id="studentsCount">0</span></p>
+            </div>
+            <div id="studentsList" class="student-list"></div>
           </div>
-          <div id="addStudentPanel" class="auth-panel hidden" style="padding:20px; margin-bottom:20px;">
-            <h3 style="margin-top:0;">Add Student</h3>
-            <form id="addStudentForm" class="auth-form">
-              <div class="form-field">
-                <label for="studentName">Name</label>
-                <input id="studentName" type="text" placeholder="Student full name" required>
-              </div>
-              <div class="form-field">
-                <label for="studentEmail">Email</label>
-                <input id="studentEmail" type="email" placeholder="Student email" required>
-              </div>
-              <button type="submit" class="primary-button">Save Student</button>
-            </form>
-          </div>
-          <div id="studentsList"></div>
         </div>
       </div>
     </div>
   </main>
 
   <footer>
-    © 2026 Flask App Demo
+    © 2026 Flask Activity
   </footer>
 
   <div id="toast" class="toast"></div>
@@ -259,9 +253,7 @@
         routes.push({ label: 'Log In', route: 'login' });
         routes.push({ label: 'Register', route: 'register' });
       }
-      nav.innerHTML = routes.map(item => {
-        return `<a class="nav-link" href="#${item.route}" data-route="${item.route}">${item.label}</a>`;
-      }).join('');
+      nav.innerHTML = routes.map(item => `<a class="nav-link" href="#${item.route}" data-route="${item.route}">${item.label}</a>`).join('');
       Array.from(nav.querySelectorAll('[data-route]')).forEach(link => {
         link.addEventListener('click', onNavLinkClick);
       });
@@ -302,23 +294,34 @@
 
     function renderStudents() {
       const studentsList = document.getElementById('studentsList');
-      const studentRows = state.students.map(student => {
-        const actions = state.currentUser && state.currentUser.role === 'admin'
-          ? `<button class="secondary-button" data-delete-id="${student.id}">Delete</button>`
+      document.getElementById('studentsCount').innerText = state.students.length;
+      const studentEntries = state.students.map(student => {
+        const matchedUser = state.users.find(u => u.email.toLowerCase() === student.email.toLowerCase());
+        const photo = matchedUser && matchedUser.image ? `<img src="${matchedUser.image}" alt="${student.full_name}">` : '👤';
+        const studentMeta = matchedUser && matchedUser.sex ? `<p class="student-meta">${matchedUser.sex}</p>` : '';
+        const adminAction = state.currentUser && state.currentUser.role === 'admin'
+          ? `<div class="admin-actions"><a href="#" data-delete-id="${student.id}">Delete</a></div>`
           : '';
-        return `<tr class="student-row"><td>${student.full_name}</td><td>${student.email}${actions ? `<span class="student-actions">${actions}</span>` : ''}</td></tr>`;
+        return `
+          <div class="student-entry">
+            <div class="student-photo">${photo}</div>
+            <div class="student-info">
+              <p class="student-name">${student.full_name} <span class="student-email">(${student.email})</span></p>
+              ${studentMeta}
+            </div>
+            ${adminAction}
+          </div>
+        `;
       }).join('');
-      studentsList.innerHTML = state.students.length > 0
-        ? `<table class="table"><thead><tr><th>Name</th><th>Email</th></tr></thead><tbody>${studentRows}</tbody></table>`
-        : '<p class="welcome-text">No students yet.</p>';
-      document.getElementById('showAddStudentButton').classList.toggle('hidden', !(state.currentUser && state.currentUser.role === 'admin'));
-      if (state.currentUser && state.currentUser.role === 'admin') {
-        studentsList.querySelectorAll('[data-delete-id]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            deleteStudent(Number(btn.dataset.deleteId));
-          });
+      studentsList.innerHTML = studentEntries;
+      const adminForm = document.getElementById('adminStudentForm');
+      adminForm.classList.toggle('hidden', !(state.currentUser && state.currentUser.role === 'admin'));
+      studentsList.querySelectorAll('[data-delete-id]').forEach(btn => {
+        btn.addEventListener('click', event => {
+          event.preventDefault();
+          deleteStudent(Number(btn.dataset.deleteId));
         });
-      }
+      });
     }
 
     function renderProfile() {
@@ -380,12 +383,6 @@
           const route = event.currentTarget.dataset.route;
           setHash(route);
         });
-      });
-
-      document.getElementById('contactForm').addEventListener('submit', event => {
-        event.preventDefault();
-        showToast('Message submitted successfully.', 'success');
-        event.target.reset();
       });
 
       document.getElementById('loginForm').addEventListener('submit', event => {
@@ -464,10 +461,6 @@
         renderProfile();
         renderHome();
         showToast('Photo removed.', 'success');
-      });
-
-      document.getElementById('showAddStudentButton').addEventListener('click', () => {
-        document.getElementById('addStudentPanel').classList.toggle('hidden');
       });
 
       document.getElementById('addStudentForm').addEventListener('submit', event => {
