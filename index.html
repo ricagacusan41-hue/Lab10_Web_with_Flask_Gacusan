@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flask App Demo</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    .page { display: none; }
+    .page.active { display: block; }
+    .content-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+    .content-header h2 { margin: 0; }
+    .app-links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .demo-button { background: var(--brand-red); color: #fff; border: none; padding: 12px 18px; border-radius: 14px; cursor: pointer; font-weight: 700; }
+    .secondary-button { background: none; border: 1px solid #d5d5d5; color: var(--text); padding: 12px 18px; border-radius: 14px; cursor: pointer; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 16px; }
+    .table { width: 100%; border-collapse: collapse; }
+    .table th, .table td { padding: 12px 10px; border-bottom: 1px solid #e6e6e6; text-align: left; }
+    .table th { color: #555; font-weight: 700; }
+    .student-actions button { margin-left: 8px; }
+    .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 20px; min-width: 280px; max-width: 90%; padding: 14px 18px; color: white; border-radius: 14px; opacity: 0.98; z-index: 999; display: none; }
+    .toast.show { display: block; }
+    .toast.success { background: #2d8e5f; }
+    .toast.error { background: #c41e3a; }
+    .hidden { display: none !important; }
+    .link-button { border: none; background: transparent; color: #1565c0; cursor: pointer; padding: 0; font: inherit; }
+    .form-row { display: grid; gap: 16px; }
+    .student-row td:first-child { width: 55%; }
+    .student-row td:last-child { width: 45%; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <a href="#home" class="brand">
+      <img src="static/images/841106a1_Technological_University_of_the_Philippines_Seal.png" alt="Logo">
+      <span>Technological University of the Philippines</span>
+    </a>
+    <nav class="app-nav" id="mainNav"></nav>
+  </header>
+
+  <main class="main">
+    <div class="auth-wrapper">
+      <div id="homePage" class="page active">
+        <div class="auth-panel welcome-panel" id="homeLoggedOut">
+          <h1 class="page-title">Welcome!</h1>
+          <p class="welcome-text">This static demo recreates the Flask interface and behavior purely in the browser.</p>
+          <p class="welcome-text">Use <strong>admin@example.com</strong> / <strong>adminpass</strong> to log in as admin and manage students.</p>
+          <div class="app-links">
+            <button class="demo-button" data-route="login">Log In</button>
+            <button class="secondary-button" data-route="register">Register</button>
+          </div>
+        </div>
+        <div class="auth-panel welcome-panel hidden" id="homeLoggedIn">
+          <h1 class="page-title">Welcome</h1>
+          <div class="profile-avatar" id="homeAvatar"></div>
+          <h2 class="profile-name" id="homeName"></h2>
+          <p class="profile-college" id="homeCollege"></p>
+        </div>
+      </div>
+
+      <div id="aboutPage" class="page">
+        <div class="auth-panel">
+          <h1 class="page-title">About</h1>
+          <p>This demo page is a static recreation of your Flask app for GitHub Pages. It shows the same navigation, login flow, profile editing, and student management experience, but it runs completely in the browser with localStorage.</p>
+        </div>
+      </div>
+
+      <div id="contactPage" class="page">
+        <div class="auth-panel">
+          <h1 class="page-title">Contact</h1>
+          <p class="welcome-text">Send a message to the demo team. The form is simulated in the browser.</p>
+          <form id="contactForm" class="auth-form">
+            <div class="form-field">
+              <label for="contactName">Name</label>
+              <input id="contactName" type="text" placeholder="Your name" required>
+            </div>
+            <div class="form-field">
+              <label for="contactEmail">Email</label>
+              <input id="contactEmail" type="email" placeholder="Your email" required>
+            </div>
+            <div class="form-field">
+              <label for="contactMessage">Message</label>
+              <textarea id="contactMessage" rows="5" placeholder="Write a message" required style="width:100%; padding:14px 16px; border-radius:16px; border:1px solid #d5d5d5; resize:vertical;"></textarea>
+            </div>
+            <button type="submit" class="primary-button">Send Message</button>
+          </form>
+        </div>
+      </div>
+
+      <div id="loginPage" class="page">
+        <div class="auth-panel">
+          <h1 class="page-title">Log In</h1>
+          <form id="loginForm" class="auth-form">
+            <div class="form-field">
+              <label for="loginEmail">Email</label>
+              <input id="loginEmail" type="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-field">
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" type="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="primary-button">Log In</button>
+            <button type="button" class="secondary-button" data-route="register">Register</button>
+          </form>
+        </div>
+      </div>
+
+      <div id="registerPage" class="page">
+        <div class="auth-panel">
+          <h1 class="page-title">Register</h1>
+          <form id="registerForm" class="auth-form">
+            <div class="form-field">
+              <label for="registerName">Full Name</label>
+              <input id="registerName" type="text" placeholder="Enter your name" required>
+            </div>
+            <div class="form-field">
+              <label for="registerEmail">Email</label>
+              <input id="registerEmail" type="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-field">
+              <label for="registerPassword">Password</label>
+              <input id="registerPassword" type="password" placeholder="Create a password" required>
+            </div>
+            <button type="submit" class="primary-button">Register</button>
+            <button type="button" class="secondary-button" data-route="login">Log In</button>
+          </form>
+        </div>
+      </div>
+
+      <div id="profilePage" class="page">
+        <div class="auth-panel">
+          <h1 class="page-title">Profile</h1>
+          <form id="profileForm" class="auth-form">
+            <div class="form-field">
+              <label for="profileDisplayName">Display Name</label>
+              <input id="profileDisplayName" type="text" placeholder="Display name">
+            </div>
+            <div class="form-field">
+              <label for="profileCollege">College</label>
+              <input id="profileCollege" type="text" placeholder="College">
+            </div>
+            <div class="form-field">
+              <label for="profileSex">Sex</label>
+              <select id="profileSex">
+                <option value="">Select sex</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="profilePhoto">Profile Photo</label>
+              <input id="profilePhoto" type="file" accept="image/*">
+            </div>
+            <div class="preview-section hidden" id="photoPreviewSection">
+              <h3>Photo preview</h3>
+              <img id="photoPreview" src="" alt="Preview">
+            </div>
+            <button type="submit" class="primary-button">Save Profile</button>
+            <button type="button" class="secondary-button" id="removePhotoButton">Remove Photo</button>
+          </form>
+        </div>
+      </div>
+
+      <div id="studentsPage" class="page">
+        <div class="auth-panel">
+          <div class="content-header">
+            <h1 class="page-title">Students</h1>
+            <button type="button" class="secondary-button hidden" id="showAddStudentButton">Add Student</button>
+          </div>
+          <div id="addStudentPanel" class="auth-panel hidden" style="padding:20px; margin-bottom:20px;">
+            <h3 style="margin-top:0;">Add Student</h3>
+            <form id="addStudentForm" class="auth-form">
+              <div class="form-field">
+                <label for="studentName">Name</label>
+                <input id="studentName" type="text" placeholder="Student full name" required>
+              </div>
+              <div class="form-field">
+                <label for="studentEmail">Email</label>
+                <input id="studentEmail" type="email" placeholder="Student email" required>
+              </div>
+              <button type="submit" class="primary-button">Save Student</button>
+            </form>
+          </div>
+          <div id="studentsList"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 Flask App Demo
+  </footer>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const STORAGE_USERS = 'demoUsers';
+    const STORAGE_CURRENT = 'demoCurrentUser';
+    const STORAGE_STUDENTS = 'demoStudents';
+
+    const defaultUsers = [
+      {
+        id: 1,
+        email: 'admin@example.com',
+        password: 'adminpass',
+        display_name: 'Admin',
+        role: 'admin',
+        college: 'Technological University of the Philippines',
+        sex: 'Other',
+        image: ''
+      }
+    ];
+
+    const defaultStudents = [
+      { id: 1, full_name: 'Miguel Reyes', email: 'miguel.reyes@example.com' },
+      { id: 2, full_name: 'Anna Santos', email: 'anna.santos@example.com' },
+      { id: 3, full_name: 'Jin Park', email: 'jin.park@example.com' }
+    ];
+
+    const state = {
+      users: [],
+      currentUser: null,
+      students: []
+    };
+
+    function loadState() {
+      state.users = JSON.parse(localStorage.getItem(STORAGE_USERS) || 'null') || defaultUsers;
+      state.students = JSON.parse(localStorage.getItem(STORAGE_STUDENTS) || 'null') || defaultStudents;
+      const currentId = localStorage.getItem(STORAGE_CURRENT);
+      state.currentUser = currentId ? state.users.find(u => u.id === Number(currentId)) : null;
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_USERS, JSON.stringify(state.users));
+      localStorage.setItem(STORAGE_STUDENTS, JSON.stringify(state.students));
+      localStorage.setItem(STORAGE_CURRENT, state.currentUser ? state.currentUser.id : '');
+    }
+
+    function setHash(route) {
+      window.location.hash = route;
+    }
+
+    function getRoute() {
+      return window.location.hash.replace('#', '') || 'home';
+    }
+
+    function updateNav() {
+      const nav = document.getElementById('mainNav');
+      const routes = [
+        { label: 'Home', route: 'home' },
+        { label: 'About', route: 'about' },
+        { label: 'Contact', route: 'contact' }
+      ];
+      if (state.currentUser) {
+        routes.push({ label: 'Profile', route: 'profile' });
+        routes.push({ label: 'Students', route: 'students' });
+      }
+      routes.push({ label: state.currentUser ? 'Log Out' : 'Log In', route: state.currentUser ? 'logout' : 'login' });
+      if (!state.currentUser) {
+        routes.splice(routes.length - 1, 0, { label: 'Register', route: 'register' });
+      }
+      nav.innerHTML = routes.map(item => {
+        return `<a class="nav-link" href="#${item.route}" data-route="${item.route}">${item.label}</a>`;
+      }).join('');
+      Array.from(nav.querySelectorAll('[data-route]')).forEach(link => {
+        link.addEventListener('click', onNavLinkClick);
+      });
+    }
+
+    function onNavLinkClick(event) {
+      const route = event.currentTarget.dataset.route;
+      if (route === 'logout') {
+        event.preventDefault();
+        logout();
+        return;
+      }
+      setHash(route);
+    }
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      const target = document.getElementById(pageId + 'Page');
+      if (!target) return;
+      target.classList.add('active');
+    }
+
+    function renderHome() {
+      const loggedOut = document.getElementById('homeLoggedOut');
+      const loggedIn = document.getElementById('homeLoggedIn');
+      if (state.currentUser) {
+        loggedOut.classList.add('hidden');
+        loggedIn.classList.remove('hidden');
+        document.getElementById('homeName').innerText = state.currentUser.display_name || state.currentUser.email.split('@')[0];
+        document.getElementById('homeCollege').innerText = state.currentUser.college || '';
+        const avatar = document.getElementById('homeAvatar');
+        avatar.innerHTML = state.currentUser.image ? `<img class="avatar-img" src="${state.currentUser.image}" alt="${state.currentUser.display_name}">` : '<span class="avatar-placeholder">👤</span>';
+      } else {
+        loggedOut.classList.remove('hidden');
+        loggedIn.classList.add('hidden');
+      }
+    }
+
+    function renderStudents() {
+      const studentsList = document.getElementById('studentsList');
+      const studentRows = state.students.map(student => {
+        const actions = state.currentUser && state.currentUser.role === 'admin'
+          ? `<button class="secondary-button" data-delete-id="${student.id}">Delete</button>`
+          : '';
+        return `<tr class="student-row"><td>${student.full_name}</td><td>${student.email}${actions ? `<span class="student-actions">${actions}</span>` : ''}</td></tr>`;
+      }).join('');
+      studentsList.innerHTML = state.students.length > 0
+        ? `<table class="table"><thead><tr><th>Name</th><th>Email</th></tr></thead><tbody>${studentRows}</tbody></table>`
+        : '<p class="welcome-text">No students yet.</p>';
+      document.getElementById('showAddStudentButton').classList.toggle('hidden', !(state.currentUser && state.currentUser.role === 'admin'));
+      if (state.currentUser && state.currentUser.role === 'admin') {
+        studentsList.querySelectorAll('[data-delete-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            deleteStudent(Number(btn.dataset.deleteId));
+          });
+        });
+      }
+    }
+
+    function renderProfile() {
+      if (!state.currentUser) return;
+      document.getElementById('profileDisplayName').value = state.currentUser.display_name || '';
+      document.getElementById('profileCollege').value = state.currentUser.college || '';
+      document.getElementById('profileSex').value = state.currentUser.sex || '';
+      const preview = document.getElementById('photoPreview');
+      const previewSection = document.getElementById('photoPreviewSection');
+      if (state.currentUser.image) {
+        preview.src = state.currentUser.image;
+        previewSection.classList.remove('hidden');
+      } else {
+        preview.src = '';
+        previewSection.classList.add('hidden');
+      }
+    }
+
+    function logout() {
+      state.currentUser = null;
+      saveState();
+      updateNav();
+      setHash('home');
+      showToast('Logged out successfully.', 'success');
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.className = `toast show ${type}`;
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function handleRoute() {
+      const route = getRoute();
+      const pageRoutes = ['home', 'about', 'contact', 'login', 'register', 'profile', 'students'];
+      if (!pageRoutes.includes(route)) {
+        setHash('home');
+        return;
+      }
+      if ((route === 'profile' || route === 'students') && !state.currentUser) {
+        showToast('Please log in first.', 'error');
+        setHash('login');
+        return;
+      }
+      showPage(route);
+      if (route === 'home') renderHome();
+      if (route === 'students') renderStudents();
+      if (route === 'profile') renderProfile();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      updateNav();
+      handleRoute();
+
+      document.querySelectorAll('[data-route]').forEach(button => {
+        button.addEventListener('click', event => {
+          const route = event.currentTarget.dataset.route;
+          setHash(route);
+        });
+      });
+
+      document.getElementById('contactForm').addEventListener('submit', event => {
+        event.preventDefault();
+        showToast('Message submitted successfully.', 'success');
+        event.target.reset();
+      });
+
+      document.getElementById('loginForm').addEventListener('submit', event => {
+        event.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        const user = state.users.find(u => u.email.toLowerCase() === email && u.password === password);
+        if (!user) {
+          showToast('Invalid email or password.', 'error');
+          return;
+        }
+        state.currentUser = user;
+        saveState();
+        updateNav();
+        setHash('home');
+        showToast('Logged in successfully!', 'success');
+      });
+
+      document.getElementById('registerForm').addEventListener('submit', event => {
+        event.preventDefault();
+        const name = document.getElementById('registerName').value.trim();
+        const email = document.getElementById('registerEmail').value.trim().toLowerCase();
+        const password = document.getElementById('registerPassword').value;
+        if (state.users.some(u => u.email.toLowerCase() === email)) {
+          showToast('This email is already registered.', 'error');
+          return;
+        }
+        const newUser = {
+          id: Math.max(...state.users.map(u => u.id), 0) + 1,
+          email,
+          password,
+          display_name: name || email.split('@')[0],
+          role: 'user',
+          college: '',
+          sex: '',
+          image: ''
+        };
+        state.users.push(newUser);
+        state.currentUser = newUser;
+        saveState();
+        updateNav();
+        setHash('home');
+        showToast('Account created successfully!', 'success');
+      });
+
+      document.getElementById('profileForm').addEventListener('submit', event => {
+        event.preventDefault();
+        if (!state.currentUser) return;
+        state.currentUser.display_name = document.getElementById('profileDisplayName').value.trim() || state.currentUser.display_name;
+        state.currentUser.college = document.getElementById('profileCollege').value.trim();
+        state.currentUser.sex = document.getElementById('profileSex').value;
+        saveState();
+        updateNav();
+        renderHome();
+        showToast('Profile updated.', 'success');
+      });
+
+      document.getElementById('profilePhoto').addEventListener('change', event => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          state.currentUser.image = reader.result;
+          saveState();
+          renderProfile();
+          renderHome();
+          showToast('Photo uploaded successfully.', 'success');
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById('removePhotoButton').addEventListener('click', () => {
+        if (!state.currentUser) return;
+        state.currentUser.image = '';
+        saveState();
+        renderProfile();
+        renderHome();
+        showToast('Photo removed.', 'success');
+      });
+
+      document.getElementById('showAddStudentButton').addEventListener('click', () => {
+        document.getElementById('addStudentPanel').classList.toggle('hidden');
+      });
+
+      document.getElementById('addStudentForm').addEventListener('submit', event => {
+        event.preventDefault();
+        if (!state.currentUser || state.currentUser.role !== 'admin') {
+          showToast('Permission denied.', 'error');
+          return;
+        }
+        const fullName = document.getElementById('studentName').value.trim();
+        const email = document.getElementById('studentEmail').value.trim();
+        if (!fullName || !email) {
+          showToast('Name and email required.', 'error');
+          return;
+        }
+        state.students.push({ id: Math.max(...state.students.map(s => s.id), 0) + 1, full_name: fullName, email });
+        saveState();
+        event.target.reset();
+        renderStudents();
+        showToast('Student added.', 'success');
+      });
+
+      window.addEventListener('hashchange', () => {
+        handleRoute();
+      });
+      document.addEventListener('click', event => {
+        if (event.target.matches('[data-route]')) {
+          event.preventDefault();
+          setHash(event.target.dataset.route);
+        }
+      });
+    });
+
+    function deleteStudent(id) {
+      if (!state.currentUser || state.currentUser.role !== 'admin') {
+        showToast('Permission denied.', 'error');
+        return;
+      }
+      state.students = state.students.filter(student => student.id !== id);
+      saveState();
+      renderStudents();
+      showToast('Student deleted.', 'success');
+    }
+  </script>
+</body>
+</html>
