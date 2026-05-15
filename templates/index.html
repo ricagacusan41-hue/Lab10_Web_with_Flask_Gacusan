@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+  {% if current_user.is_authenticated %}
+    <div class="auth-panel welcome-panel">
+      <h1 class="page-title">Welcome</h1>
+      <div class="profile-avatar">
+        {% if current_user.image_filename %}
+          <img src="{{ url_for('static', filename='uploads/' + current_user.image_filename) }}" alt="{{ current_user.display_name }}" class="avatar-img">
+        {% else %}
+          <span class="avatar-placeholder">👤</span>
+        {% endif %}
+      </div>
+      <h2 class="profile-name">{{ current_user.display_name or current_user.email.split('@')[0] }}</h2>
+      {% if current_user.college %}
+        <p class="profile-college">{{ current_user.college }}</p>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="auth-panel welcome-panel">
+      <h1 class="page-title">Welcome!</h1>
+      <p class="welcome-text">This app was built using Flask and Jinja2 templates.</p>
+    </div>
+  {% endif %}
+{% endblock %}
