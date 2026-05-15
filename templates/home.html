@@ -2,7 +2,7 @@
 {% block content %}
   {% if current_user.is_authenticated %}
     <div class="auth-panel welcome-panel">
-      <h1 class="page-title">Welcome</h1>
+      <h1 class="page-title">Welcome to Activity 10 Flask Web App</h1>
       <div class="profile-avatar">
         {% if current_user.image_filename %}
           <img src="{{ url_for('static', filename='uploads/' + current_user.image_filename) }}" alt="{{ current_user.display_name }}" class="avatar-img">
@@ -17,7 +17,7 @@
     </div>
   {% else %}
     <div class="auth-panel welcome-panel">
-      <h1 class="page-title">Welcome!</h1>
+      <h1 class="page-title">Welcome to Activity 10 Flask Web App</h1>
       <p class="welcome-text">This app was built using Flask and Jinja2 templates.</p>
     </div>
   {% endif %}

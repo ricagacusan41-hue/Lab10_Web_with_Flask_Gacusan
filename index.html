@@ -42,16 +42,15 @@
     <div class="auth-wrapper">
       <div id="homePage" class="page active">
         <div class="auth-panel welcome-panel" id="homeLoggedOut">
-          <h1 class="page-title">Welcome!</h1>
+          <h1 class="page-title">Welcome to Activity 10 Flask Web App</h1>
           <p class="welcome-text">This static demo recreates the Flask interface and behavior purely in the browser.</p>
-          <p class="welcome-text">Use <strong>admin@example.com</strong> / <strong>adminpass</strong> to log in as admin and manage students.</p>
           <div class="app-links">
             <button class="demo-button" data-route="login">Log In</button>
             <button class="secondary-button" data-route="register">Register</button>
           </div>
         </div>
         <div class="auth-panel welcome-panel hidden" id="homeLoggedIn">
-          <h1 class="page-title">Welcome</h1>
+          <h1 class="page-title">Welcome to Activity 10 Flask Web App</h1>
           <div class="profile-avatar" id="homeAvatar"></div>
           <h2 class="profile-name" id="homeName"></h2>
           <p class="profile-college" id="homeCollege"></p>
@@ -255,10 +254,10 @@
       if (state.currentUser) {
         routes.push({ label: 'Profile', route: 'profile' });
         routes.push({ label: 'Students', route: 'students' });
-      }
-      routes.push({ label: state.currentUser ? 'Log Out' : 'Log In', route: state.currentUser ? 'logout' : 'login' });
-      if (!state.currentUser) {
-        routes.splice(routes.length - 1, 0, { label: 'Register', route: 'register' });
+        routes.push({ label: 'Log Out', route: 'logout' });
+      } else {
+        routes.push({ label: 'Log In', route: 'login' });
+        routes.push({ label: 'Register', route: 'register' });
       }
       nav.innerHTML = routes.map(item => {
         return `<a class="nav-link" href="#${item.route}" data-route="${item.route}">${item.label}</a>`;
