@@ -14,6 +14,72 @@
     .toast.error { background: #c41e3a; }
     .hidden { display: none !important; }
     .app-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .nav-link.nav-cta { background-color: #C41E3A; color: #fff; border-radius: 999px; padding: 10px 18px; }
+    .nav-link.nav-cta:hover { background-color: #9b1a2e; }
+    .app-nav { align-items: center; position: relative; }
+    .profile-menu {
+      position: relative;
+    }
+    .details-reset {
+      display: inline-block;
+    }
+    .profile-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #C41E3A;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .profile-chip .avatar-thumb {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+    }
+    .profile-chip img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .profile-menu-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 18px;
+      box-shadow: 0 22px 48px rgba(0,0,0,0.08);
+      min-width: 180px;
+      overflow: hidden;
+      z-index: 50;
+      flex-direction: column;
+    }
+    .details-reset[open] .profile-menu-dropdown {
+      display: flex;
+    }
+    .profile-menu-dropdown a {
+      padding: 12px 16px;
+      color: #191919;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s ease;
+    }
+    .profile-menu-dropdown a:hover {
+      background: #f6f6f6;
+    }
+    .remove-photo-button.hidden {
+      display: none !important;
+    }
     .student-actions button { margin-left: 8px; }
     .profile-avatar { width: 140px; height: 140px; margin: 0 auto 22px; border-radius: 50%; background: #f2f2f2; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .avatar-img { width: 100%; height: 100%; object-fit: cover; }
@@ -52,10 +118,6 @@
         <div class="auth-panel welcome-panel" id="homeLoggedOut">
           <h1 class="page-title">Welcome to Activity 10 Flask Web App</h1>
           <p class="welcome-text">This app was built using Flask and Jinja2 templates.</p>
-          <div class="app-links">
-            <button class="primary-button" data-route="login">Log In</button>
-            <button class="secondary-button" data-route="register">Register</button>
-          </div>
         </div>
         <div class="auth-panel welcome-panel hidden" id="homeLoggedIn">
           <h1 class="page-title">Welcome to Activity 10 Flask Web App</h1>
@@ -246,15 +308,27 @@
         { label: 'Contact', route: 'contact' }
       ];
       if (state.currentUser) {
-        routes.push({ label: 'Profile', route: 'profile' });
-        routes.push({ label: 'Students', route: 'students' });
-        routes.push({ label: 'Log Out', route: 'logout' });
+        nav.innerHTML = routes.map(item => `<a class="nav-link" href="#${item.route}" data-route="${item.route}">${item.label}</a>`).join('') +
+          `<details class="profile-menu details-reset">
+             <summary class="profile-chip">
+               <span class="avatar-thumb">${state.currentUser.image ? `<img src="${state.currentUser.image}" alt="Profile">` : '👤'}</span>
+               <span>${state.currentUser.display_name || state.currentUser.email.split('@')[0]}</span>
+             </summary>
+             <div class="profile-menu-dropdown">
+               <a href="#" data-route="profile">Profile</a>
+               <a href="#" data-route="students">Students</a>
+               <a href="#" data-route="logout">Log Out</a>
+             </div>
+           </details>`;
       } else {
-        routes.push({ label: 'Log In', route: 'login' });
-        routes.push({ label: 'Register', route: 'register' });
+        nav.innerHTML = routes.map(item => `<a class="nav-link" href="#${item.route}" data-route="${item.route}">${item.label}</a>`).join('') +
+          `<a class="nav-link" href="#login" data-route="login">Log In</a>` +
+          `<a class="nav-link nav-cta" href="#register" data-route="register">Register</a>`;
       }
-      nav.innerHTML = routes.map(item => `<a class="nav-link" href="#${item.route}" data-route="${item.route}">${item.label}</a>`).join('');
       Array.from(nav.querySelectorAll('[data-route]')).forEach(link => {
+        link.addEventListener('click', onNavLinkClick);
+      });
+      Array.from(nav.querySelectorAll('.profile-menu-dropdown a')).forEach(link => {
         link.addEventListener('click', onNavLinkClick);
       });
     }
@@ -331,12 +405,15 @@
       document.getElementById('profileSex').value = state.currentUser.sex || '';
       const preview = document.getElementById('photoPreview');
       const previewSection = document.getElementById('photoPreviewSection');
+      const removeButton = document.getElementById('removePhotoButton');
       if (state.currentUser.image) {
         preview.src = state.currentUser.image;
         previewSection.classList.remove('hidden');
+        removeButton.classList.remove('hidden');
       } else {
         preview.src = '';
         previewSection.classList.add('hidden');
+        removeButton.classList.add('hidden');
       }
     }
 
