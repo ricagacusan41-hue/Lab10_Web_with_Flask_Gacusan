@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Data & Observation #1: Modified Register Template Layout -->
+<h2>Create a New Account</h2>
+<p>Please fill in the details below:</p>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.email.label }}<br>
+        <!-- Data & Observation #17: email field with input-field class -->
+        <!-- Data & Observation #15: Default text in email field -->
+        {{ form.email(size=30, class_="input-field", default="student@tup.edu.ph") }}
+        <!-- Data & Observation #14: Show field description -->
+        {% if form.email.description %}
+            <small>{{ form.email.description }}</small>
+        {% endif %}
+    </div>
+    <div>
+        {{ form.password.label }}<br>
+        {{ form.password(size=30) }}
+    </div>
+    <div>
+        <!-- Data & Observation #1: btn class applied to submit button -->
+        {{ form.submit(class_="btn") }}
+    </div>
+</form>
+{% endblock %}
